@@ -1,11 +1,10 @@
+import TopBar from "./components/TopBar"
+
 function App() {
-  return (
-    <div className="flex items-center justify-center h-screen">
-      <h1 className="text-4xl font-bold text-purple-400">
-        Cosmos Tracker
-      </h1>
+  return(
+    <div className="min-h-screen">
+      <TopBar />
     </div>
   )
 }
-
 export default App
