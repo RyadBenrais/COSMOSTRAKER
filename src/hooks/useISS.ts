@@ -6,6 +6,7 @@ interface ISSPosition {
   altitude: number
   velocity: number
   timestamp: number
+  region: string
 }
 
 interface ISSState {
@@ -38,6 +39,7 @@ function useISS(): ISSState {
             longitude: data.longitude,
             altitude: data.altitude,
             velocity: data.velocity,
+            region: getRegion(data.latitude, data.longitude),
             timestamp: data.timestamp,
           },
           loading: false,
@@ -57,6 +59,17 @@ function useISS(): ISSState {
 
     return () => clearInterval(interval)
   }, [])
+
+  const getRegion = (lat: number, lon: number): string => {
+  if (lat > 35 && lat < 70 && lon > -10 && lon < 40) return '🇪🇺 Europe'
+  if (lat > 25 && lat < 50 && lon > -125 && lon < -65) return '🇺🇸 États-Unis'
+  if (lat > -35 && lat < 35 && lon > -20 && lon < 55) return '🌍 Afrique'
+  if (lat > 10 && lat < 55 && lon > 55 && lon < 150) return '🌏 Asie'
+  if (lat > -50 && lat < -10 && lon > -80 && lon < -35) return '🌎 Amérique du Sud'
+  if (lat > -50 && lat < 10 && lon > 110 && lon < 180) return '🌏 Océanie'
+  if (lat > 70 || lat < -60) return '🧊 Pôle'
+  return '🌊 Océan'
+}
 
   return state
 }
