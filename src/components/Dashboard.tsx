@@ -1,6 +1,7 @@
 import TopBar from './TopBar'
 import Panel from './Panel'
 import EarthGlobe from './EarthGlobe'
+import ISSTracker from './ISSTracker'
 
 function Dashboard() {
   return (
@@ -38,25 +39,23 @@ function Dashboard() {
         </aside>
 
         <section className="flex flex-col flex-1 overflow-hidden">
-            <div className="flex-1 flex items-center justify-center">
-                <EarthGlobe />
-            </div>
+          <div className="flex-1 flex items-center justify-center">
+            <EarthGlobe />
+          </div>
           <div className="p-4 border-t border-purple-500/15">
             <Panel title="Debris Classification" accent="purple">
-              <div className="flex gap-4 items-center">
-                <div className="flex flex-col gap-1 flex-1">
-                  {[
-                    { label: 'Payloads', val: '6,718', color: 'bg-cyan-400' },
-                    { label: 'Rocket bodies', val: '2,005', color: 'bg-purple-400' },
-                    { label: 'Debris', val: '13,977', color: 'bg-pink-400' },
-                  ].map((item) => (
-                    <div key={item.label} className="flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full ${item.color}`} />
-                      <span className="text-[10px] text-slate-400 flex-1">{item.label}</span>
-                      <span className="text-[10px] font-medium text-slate-200">{item.val}</span>
-                    </div>
-                  ))}
-                </div>
+              <div className="flex flex-col gap-1">
+                {[
+                  { label: 'Payloads', val: '6,718', color: 'bg-cyan-400' },
+                  { label: 'Rocket bodies', val: '2,005', color: 'bg-purple-400' },
+                  { label: 'Debris', val: '13,977', color: 'bg-pink-400' },
+                ].map((item) => (
+                  <div key={item.label} className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${item.color}`} />
+                    <span className="text-[10px] text-slate-400 flex-1">{item.label}</span>
+                    <span className="text-[10px] font-medium text-slate-200">{item.val}</span>
+                  </div>
+                ))}
               </div>
             </Panel>
           </div>
@@ -72,6 +71,10 @@ function Dashboard() {
               <p className="text-[10px] text-purple-300">apoapsis: 312km</p>
               <p className="text-[10px] text-pink-300">decay: ~6.2d</p>
             </div>
+          </Panel>
+
+          <Panel title="ISS Live Position" accent="cyan">
+            <ISSTracker />
           </Panel>
         </aside>
 
