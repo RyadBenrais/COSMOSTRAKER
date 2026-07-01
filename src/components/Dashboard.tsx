@@ -1,5 +1,6 @@
 import TopBar from './TopBar'
 import Panel from './Panel'
+import EarthGlobe from './EarthGlobe'
 
 function Dashboard() {
   return (
@@ -37,9 +38,9 @@ function Dashboard() {
         </aside>
 
         <section className="flex flex-col flex-1 overflow-hidden">
-          <div className="flex-1 flex items-center justify-center">
-            <p className="text-slate-600">Zone du globe</p>
-          </div>
+            <div className="flex-1 flex items-center justify-center">
+                <EarthGlobe />
+            </div>
           <div className="p-4 border-t border-purple-500/15">
             <Panel title="Debris Classification" accent="purple">
               <div className="flex gap-4 items-center">
