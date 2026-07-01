@@ -5,3 +5,12 @@ body {
   color: #e2e8f0;
   font-family: 'Inter', sans-serif;
 }
+
+body {
+  background: #060914;
+  color: #e2e8f0;
+  font-family: 'Inter', sans-serif;
+  background-image: 
+    radial-gradient(ellipse at 20% 50%, rgba(120, 40, 200, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(20, 60, 140, 0.1) 0%, transparent 50%);
+}
