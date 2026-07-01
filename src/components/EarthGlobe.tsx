@@ -1,13 +1,19 @@
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
+import useISS from '../hooks/useISS'
 
-function EarthGlobe() {
+interface EarthGlobeProps {
+  showISS?: boolean
+}
+
+function EarthGlobe({ showISS = true }: EarthGlobeProps) {
   const mountRef = useRef<HTMLDivElement>(null)
+  const issMarkerRef = useRef<THREE.Mesh | null>(null)
+  const { position } = useISS()
 
   useEffect(() => {
     if (!mountRef.current) return
 
-    // 1. Scène, caméra, renderer
     const scene = new THREE.Scene()
     const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000)
     camera.position.z = 2.8
@@ -17,7 +23,7 @@ function EarthGlobe() {
     renderer.setPixelRatio(window.devicePixelRatio)
     mountRef.current.appendChild(renderer.domElement)
 
-    // 2. Étoiles
+    // Étoiles
     const starsGeo = new THREE.BufferGeometry()
     const starCount = 2000
     const positions = new Float32Array(starCount * 3)
@@ -28,14 +34,14 @@ function EarthGlobe() {
     const starsMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.15 })
     scene.add(new THREE.Points(starsGeo, starsMat))
 
-    // 3. Lumières
+    // Lumières
     const ambientLight = new THREE.AmbientLight(0x111133, 0.8)
     scene.add(ambientLight)
     const sunLight = new THREE.DirectionalLight(0xffffff, 2.5)
     sunLight.position.set(5, 2, 3)
     scene.add(sunLight)
 
-    // 4. Globe terrestre
+    // Globe
     const earthGeo = new THREE.SphereGeometry(1, 64, 64)
     const textureLoader = new THREE.TextureLoader()
     const earthMat = new THREE.MeshPhongMaterial({
@@ -54,7 +60,7 @@ function EarthGlobe() {
       }
     )
 
-    // 5. Nuages
+    // Nuages
     const cloudGeo = new THREE.SphereGeometry(1.015, 64, 64)
     const cloudMat = new THREE.MeshPhongMaterial({
       transparent: true,
@@ -72,7 +78,7 @@ function EarthGlobe() {
     const clouds = new THREE.Mesh(cloudGeo, cloudMat)
     scene.add(clouds)
 
-    // 6. Atmosphère
+    // Atmosphère
     const atmosGeo = new THREE.SphereGeometry(1.06, 64, 64)
     const atmosMat = new THREE.MeshPhongMaterial({
       color: 0x4488ff,
@@ -83,7 +89,26 @@ function EarthGlobe() {
     })
     scene.add(new THREE.Mesh(atmosGeo, atmosMat))
 
-    // 7. Animation
+    // Marqueur ISS
+    if (showISS) {
+      const issGeo = new THREE.SphereGeometry(0.03, 16, 16)
+      const issMat = new THREE.MeshBasicMaterial({ color: 0x22d3ee })
+      const issMarker = new THREE.Mesh(issGeo, issMat)
+
+      const glowGeo = new THREE.SphereGeometry(0.05, 16, 16)
+      const glowMat = new THREE.MeshBasicMaterial({
+        color: 0x22d3ee,
+        transparent: true,
+        opacity: 0.3,
+      })
+      const glow = new THREE.Mesh(glowGeo, glowMat)
+      issMarker.add(glow)
+
+      scene.add(issMarker)
+      issMarkerRef.current = issMarker
+    }
+
+    // Animation
     let animId: number
     const animate = () => {
       animId = requestAnimationFrame(animate)
@@ -93,7 +118,6 @@ function EarthGlobe() {
     }
     animate()
 
-    // 8. Nettoyage
     return () => {
       cancelAnimationFrame(animId)
       mountRef.current?.removeChild(renderer.domElement)
@@ -101,12 +125,22 @@ function EarthGlobe() {
     }
   }, [])
 
-  return (
-    <div
-      ref={mountRef}
-      className="flex items-center justify-center"
-    />
-  )
+  // Mise à jour position ISS
+  useEffect(() => {
+    if (!issMarkerRef.current || !position) return
+
+    const lat = (position.latitude * Math.PI) / 180
+    const lon = (position.longitude * Math.PI) / 180
+    const radius = 1.1
+
+    issMarkerRef.current.position.set(
+      radius * Math.cos(lat) * Math.sin(lon),
+      radius * Math.sin(lat),
+      radius * Math.cos(lat) * Math.cos(lon)
+    )
+  }, [position])
+
+  return <div ref={mountRef} className="flex items-center justify-center" />
 }
 
 export default EarthGlobe
